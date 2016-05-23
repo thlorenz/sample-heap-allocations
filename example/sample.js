@@ -3,14 +3,9 @@
 const sp = require('../')
 
 module.exports = function sample(allocationFn, ondone) {
-  const infos = []
-  function onNode(info) {
-   infos.push(info)
-  }
-
   sp.startSampling(32, 10)
   allocationFn()
-  sp.visitAllocationProfile(onNode)
+  const infos = sp.collectAllocations()
   sp.stopSampling()
 
   ondone(infos)

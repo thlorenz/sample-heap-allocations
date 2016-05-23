@@ -12,7 +12,7 @@ exports.stopSampling = function stopSampling() {
   binding.stopSampling()
 }
 
-exports.visitAllocationProfile = function visitAllocationProfile(cb) {
+const visitAllocationProfile = exports.visitAllocationProfile = function visitAllocationProfile(cb) {
   const samples = []
   let sample = null
   let currentCallSite
@@ -53,3 +53,28 @@ exports.visitAllocationProfile = function visitAllocationProfile(cb) {
 
   cb(samples)
 }
+
+exports.collectAllocations = function collectAllocations() {
+  const infos = []
+  function add(info) {
+    infos.push(info)
+  }
+
+  function onNode(allocs) {
+    function actualAllocs(alloc) {
+      // some results we get have no allocations at all, so we ignore those
+      const sitesLen = alloc.callsites.length
+      for (var i = 0; i < sitesLen; i++) {
+        const callsiteAllocs = alloc.callsites[i].allocations
+        if (callsiteAllocs.length) return true
+      }
+      return false
+    }
+    allocs.filter(actualAllocs).forEach(add)
+  }
+
+  visitAllocationProfile(onNode)
+  return infos
+}
+
+exports.addFormat = require('./lib/add-format')

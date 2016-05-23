@@ -2,6 +2,7 @@
 
 const allocate = require('./allocate')
 const sample = require('./sample')
+const addFormat = require('../').addFormat
 
 function inspect(obj, depth) {
   if (typeof console.error === 'function') {
@@ -9,7 +10,15 @@ function inspect(obj, depth) {
   }
 }
 
+function onallocations(allocations) {
+  function onformatted(err) {
+    if (err) return console.error(err)
+    inspect(allocations)
+  }
+  addFormat({ allocations, includeSourceLines: 10 }, onformatted)
+}
+
 sample(function alloc() {
   allocate.innerOuterArray()
   allocate.flatArray()
-}, inspect)
+}, onallocations)
