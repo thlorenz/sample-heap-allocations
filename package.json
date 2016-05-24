@@ -5,7 +5,8 @@
   "main": "sample-heap-allocations.js",
   "scripts": {
     "test": "tape test/*.js",
-    "cli": "node example/cli"
+    "cli": "node example/cli",
+    "cli-formatted": "node example/cli-formatted"
   },
   "repository": {
     "type": "git",
