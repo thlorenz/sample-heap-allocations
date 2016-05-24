@@ -1,0 +1,66 @@
+section.left {
+  position: absolute;
+  top: 50px;
+  left: 1%; 
+  width: 450px;
+  bottom: 0;
+}
+
+section.right {
+  position: absolute;
+  top: 55px;
+  left: 480px;
+  width: 60%;
+  bottom: 0;
+}
+
+.header {
+  color: rgb(236, 238, 237);
+  background: rgb(49, 49, 51);
+  width: 100%;
+  text-align: center;
+  padding: 1px 10px 1px 10px;
+}
+
+.header > h1 {
+  margin: 0;
+}
+
+.control-panel,
+.samples
+.messages {
+  background: rgb(236, 238, 237);
+  border: solid rgb(49,49,51) 1px;
+  color: rgb(49, 49, 51);
+  padding: 5px;
+  margin: 5px;
+  overflow: scroll;
+  overflow-y: visible;
+}
+
+.control-panel {
+  width: 100%;
+  height: 55px;
+}
+
+.samples {
+  height: 576px;
+  width: 100%;
+  font-size: 12px;
+}
+
+.messages {
+  border: none;
+}
+
+.selectable {
+  cursor: pointer;
+}
+
+.selectable:hover {
+  background: antiquewhite;
+}
+
+.selected {
+  color: blue;
+}

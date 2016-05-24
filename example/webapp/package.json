@@ -1,0 +1,27 @@
+{
+  "name": "webapp",
+  "version": "0.0.0",
+  "description": "Webapp demonstrating the use of the sample-heap-allocations module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server"
+  },
+  "dependencies": {
+    "browserify": "~13.0.1",
+    "xhr": "~2.2.0"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "author": {
+    "name": "Thorsten Lorenz",
+    "email": "thlorenz@gmx.de",
+    "url": "http://thlorenz.com"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/thlorenz/webapp/blob/master/LICENSE"
+  },
+  "engine": {
+    "node": ">=6.2"
+  }
+}
