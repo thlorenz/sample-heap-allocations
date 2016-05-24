@@ -3,15 +3,36 @@
 const bindings = require('bindings')
 const binding = bindings('sample_heap')
 
+/**
+ * Starts sampling of memory allocations
+ *
+ * @name startSampling
+ * @function
+ * @param {number} interval the sampling interval in ms, default: 32
+ * @param {number} stack_depth depth of stack to include for each memory allocation, default: 6
+ */
 exports.startSampling = function startSampling(interval = 32, stack_depth = 6) {
   // todo: ensure these are integers
   binding.startSampling(interval, stack_depth)
 }
 
+/**
+ * Stops sampling of memory allocations
+ *
+ * @name stopSampling
+ * @function
+ */
 exports.stopSampling = function stopSampling() {
   binding.stopSampling()
 }
 
+/**
+ * Allows collecting all sampled allocations using the Visitor pattern, thus matching the underlying v8 API.
+ *
+ * @name visitAllocationProfile
+ * @function
+ * @param {function} cb called back with each callsite for which memory allocations where encountered
+ */
 const visitAllocationProfile = exports.visitAllocationProfile = function visitAllocationProfile(cb) {
   const samples = []
   let sample = null
@@ -30,14 +51,14 @@ const visitAllocationProfile = exports.visitAllocationProfile = function visitAl
       sample = { callsites: [] }
     }
     currentCallSite = {
-      depth: depth,
-      name: name,
-      script: script_name,
-      script_id: script_id,
-      start_position: start_position,
-      line_number: line_number,
-      column_number: column_number,
-      allocations: []
+      depth          : depth,
+      name           : name,
+      script         : script_name,
+      script_id      : script_id,
+      start_position : start_position,
+      line_number    : line_number,
+      column_number  : column_number,
+      allocations    : []
     }
 
     if (!sample) sample = { callsites: [] }
@@ -54,6 +75,13 @@ const visitAllocationProfile = exports.visitAllocationProfile = function visitAl
   cb(samples)
 }
 
+/**
+ * Higher level API which collects all allocated callsites via @see visitAllocationProfile.
+ *
+ * @name collectAllocations
+ * @function
+ * @return {Array.<Object>} array of collected callsites
+ */
 exports.collectAllocations = function collectAllocations() {
   const infos = []
   function add(info) {
