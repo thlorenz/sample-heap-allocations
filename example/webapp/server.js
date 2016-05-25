@@ -45,11 +45,6 @@ function serveCss(res) {
   fs.createReadStream(path.join(__dirname, 'index.css')).pipe(res)
 }
 
-function serveDep(res, p) {
-  res.writeHead(200, { 'Content-Type': 'text/css' })
-  fs.createReadStream(path.join(__dirname, 'deps', p)).pipe(res)
-}
-
 function serveStartSampling(res) {
   sh.startSampling()
   const json = JSON.stringify({ type: 'message', msg: 'Sampling Started' })
@@ -90,7 +85,6 @@ function serveAllocateNested(res) {
 function onRequest(req, res) {
   console.error('%s %s', req.method, req.url)
 
-  if (req.url.startsWith('/deps')) return serveDep(res, req.url.slice('/deps/'.length))
   if (req.url === '/') return serveIndex(res)
   if (req.url === '/bundle.js') return serveBundle(res)
   if (req.url === '/index.css') return serveCss(res)

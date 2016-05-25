@@ -8,9 +8,17 @@
   },
   "dependencies": {
     "browserify": "~13.0.1",
+    "handlebars": "~4.0.5",
+    "hbsfy": "~2.5.1",
+    "highlight.js": "~9.4.0",
     "xhr": "~2.2.0"
   },
   "devDependencies": {},
+  "browserify": {
+    "transform": [
+      "hbsfy"
+    ]
+  },
   "keywords": [],
   "author": {
     "name": "Thorsten Lorenz",

@@ -1,9 +1,13 @@
 'use strict'
 
 const xhr = require('xhr')
+const hjs = require('highlight.js')
+window.hjs = hjs
 const controlPanelLinks = document.querySelectorAll('.control-panel a')
 const messagesEl = document.getElementById('messages')
 const samplesEl = document.getElementById('samples')
+
+const callsiteTmpl = require('./callsite.hbs')
 
 function logResponse(res) {
   var html = '<span><em>' + res.status + '</em></span>&nbsp;'
@@ -16,19 +20,33 @@ function logResponse(res) {
 }
 
 function formattedOnly(data) {
+  function withAllocations(x) {
+    return x.allocations && x.allocations.length
+  }
+
   function stringify(name, x) {
-    let res =  name + ' ' + x.location + ' --- (' + x.allocations.join(' | ') + ')'
-    if (x.source && x.source.length) res += '\n\n' + x.source.join('\n')
+    let res = { summary: name + ' ' + x.location + ' --- (' + x.allocations.join(' | ') + ')' }
+    if (x.source && x.source.length) { 
+      res.source = hjs.highlight('js', x.source.join('\n')).value
+      console.log(res.source)
+    }
     return res
   }
-  return { callsites: data.callsites.map(x => stringify(x.name, x.formatted)) }
+  return {
+    callsites: data.callsites
+      .filter(withAllocations)
+      .map(x => stringify(x.name, x.formatted))
+  }
 }
 
 function renderData(data) {
-  /*global JsonHuman */
   const formatted = data.map(formattedOnly)
-  const node = JsonHuman.format(formatted)
-  samplesEl.appendChild(node)
+  let fullHtml = ''
+  for (var i = 0; i < formatted.length; i++) {
+    const html = callsiteTmpl(formatted[i].callsites)
+    fullHtml += '<section class="callsites">' + html + '</section>'
+  }
+  samplesEl.innerHTML = fullHtml
 }
 
 function onresponse(err, res) {
