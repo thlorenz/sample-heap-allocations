@@ -73,14 +73,14 @@ function serveStopSampling(res) {
 }
 
 function serveAllocateFlat(res) {
-  allocate.flatArray()
+  server.allocatedFlat = allocate.flatArray()
   const json = JSON.stringify({ type: 'message', msg: 'Flat Array Allocated' })
   res.writeHead(200, { 'Content-Type': 'application/json', 'Content-Length': json.length })
   res.end(json)
 }
 
 function serveAllocateNested(res) {
-  allocate.innerOuterArray()
+  server.allocatedNested = allocate.innerOuterArray()
   const json = JSON.stringify({ type: 'message', msg: 'Nested Array Allocated' })
   res.writeHead(200, { 'Content-Type': 'application/json', 'Content-Length': json.length })
   res.end(json)

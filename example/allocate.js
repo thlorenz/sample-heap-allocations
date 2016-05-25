@@ -16,6 +16,7 @@ exports.innerOuterArray = function innerOuterArray() {
     }
     arr.push(innerArr)
   }
+  return arr
 }
 
 exports.flatArray = function flatArray() {
@@ -26,4 +27,5 @@ exports.flatArray = function flatArray() {
     }
   }
   fillArray()
+  return A
 }
