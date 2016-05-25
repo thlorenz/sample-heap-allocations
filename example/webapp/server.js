@@ -56,7 +56,6 @@ function serveStopSampling(res) {
   // important to collect allocations before stopping to sample
   const allocs = sh.collectAllocations()
   sh.stopSampling()
-  // need to ignore core files before we can add in source code
   sh.addFormat({ allocations: allocs, includeSourceLines: 10 }, onformatted)
 
   function onformatted(err) {

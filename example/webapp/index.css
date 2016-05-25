@@ -65,6 +65,18 @@ section.right {
   color: blue;
 }
 
+.summary {
+  font-style: underline;
+}
+
+.location {
+  font-style: italic;
+}
+
+.allocations {
+  font-family: monospace;
+}
+
 .hljs {
   white-space: pre;
 }

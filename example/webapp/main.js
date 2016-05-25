@@ -2,7 +2,6 @@
 
 const xhr = require('xhr')
 const hjs = require('highlight.js')
-window.hjs = hjs
 const controlPanelLinks = document.querySelectorAll('.control-panel a')
 const messagesEl = document.getElementById('messages')
 const samplesEl = document.getElementById('samples')
@@ -25,10 +24,13 @@ function formattedOnly(data) {
   }
 
   function stringify(name, x) {
-    let res = { summary: name + ' ' + x.location + ' --- (' + x.allocations.join(' | ') + ')' }
-    if (x.source && x.source.length) { 
+    let res = {
+      summary: {
+        name: name, location: x.location, allocations: x.allocations.join(' | ')
+      }
+    }
+    if (x.source && x.source.length) {
       res.source = hjs.highlight('js', x.source.join('\n')).value
-      console.log(res.source)
     }
     return res
   }

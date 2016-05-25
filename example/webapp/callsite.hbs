@@ -1,5 +1,7 @@
 {{#each this}}
-  <h4>{{summary}}</h4>
+  <h3 class="summary">{{summary.name}}</h3>
+  <p class="location">{{summary.location}}</p>
+  <p class="allocations">{{summary.allocations}}</p>
   {{#if source}}
   <code class="js hljs">
 {{{source}}}
