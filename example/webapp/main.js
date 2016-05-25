@@ -17,7 +17,9 @@ function logResponse(res) {
 
 function formattedOnly(data) {
   function stringify(name, x) {
-    return name + ' ' + x.location + ' --- (' + x.allocations.join(' | ') + ')'
+    let res =  name + ' ' + x.location + ' --- (' + x.allocations.join(' | ') + ')'
+    if (x.source && x.source.length) res += '\n\n' + x.source.join('\n')
+    return res
   }
   return { callsites: data.callsites.map(x => stringify(x.name, x.formatted)) }
 }

@@ -64,3 +64,8 @@ section.right {
 .selected {
   color: blue;
 }
+
+/* Json Human tweaks */
+.jh-type-string {
+  white-space: pre;
+}
