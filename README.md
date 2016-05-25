@@ -16,13 +16,16 @@ sh.stopSampling()
 
 Working version (needs NodeJS >=v6). No tests yet :(
 
+
 ## Example
 
 Run the CLI example via `npm run cli` or `npm run cli-formatted`
 
+Run the WebApp example via `npm run app`
+
 ## Installation
 
-    npm install sample-heap-allocations
+Not yet :(
 
 ## API
 

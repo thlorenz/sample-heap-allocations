@@ -6,7 +6,8 @@
   "scripts": {
     "test": "tape test/*.js",
     "cli": "node example/cli",
-    "cli-formatted": "node example/cli-formatted"
+    "cli-formatted": "node example/cli-formatted",
+    "app": "cd example/webapp/ && npm install && npm start"
   },
   "repository": {
     "type": "git",
