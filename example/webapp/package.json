@@ -4,7 +4,8 @@
   "description": "Webapp demonstrating the use of the sample-heap-allocations module",
   "main": "index.js",
   "scripts": {
-    "start": "node server"
+    "postinstall": "cd ../../ nave use v6.2  node-gyp rebuild",
+    "start": "nave use v6.2 node server"
   },
   "dependencies": {
     "browserify": "~13.0.1",
@@ -13,7 +14,9 @@
     "highlight.js": "~9.4.0",
     "xhr": "~2.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nave": "~1.0.1"
+  },
   "browserify": {
     "transform": [
       "hbsfy"
