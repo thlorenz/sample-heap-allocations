@@ -2,6 +2,7 @@
 
 const bindings = require('bindings')
 const binding = bindings('sample_heap')
+// const binding = require('/Users/thlorenz/Library/Developer/Xcode/DerivedData/binding-azowbesvlizacoezrbwrtpuhbiit/Build/Products/Debug/sample_heap.node')
 
 /**
  * Starts sampling of memory allocations
@@ -24,6 +25,50 @@ exports.startSampling = function startSampling(interval = 32, stack_depth = 6) {
  */
 exports.stopSampling = function stopSampling() {
   binding.stopSampling()
+}
+
+/**
+ * Visits all nodes and returns a flat array of them.
+ * Each has an id and an array of ids of its children.
+ * It has another array of allocations associated with that node.
+ *
+ * @name visitNodes
+ * @function
+ * @return Array.<Object> nodes found
+ */
+exports.visitNodes = function visitNodes() {
+  const nodes = []
+  let currentNode = null
+
+  function onnode(id,
+                  script_id,
+                  script_name,
+                  name,
+                  line_number,
+                  column_number) {
+    currentNode = {
+      id,
+      script_id,
+      script_name,
+      name,
+      line_number,
+      column_number,
+      allocations: [],
+      children: []
+    }
+    nodes.push(currentNode)
+  }
+
+  function onallocation(count, size) {
+    currentNode.allocations.push({ count, size })
+  }
+
+  function onchild(child) {
+    currentNode.children.push(child)
+  }
+
+  binding.visitNodes(onnode, onallocation, onchild)
+  return nodes
 }
 
 /**
