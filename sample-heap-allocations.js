@@ -27,15 +27,15 @@ exports.stopSampling = function stopSampling() {
 }
 
 /**
- * Visits all nodes and returns a flat array of them.
+ * Visits all nodes in the allocation callgraph and returns a flat array of them.
  * Each has an id and an array of ids of its children.
  * It has another array of allocations associated with that node.
  *
- * @name visitNodes
+ * @name collectNodes
  * @function
  * @return Array.<Object> nodes found
  */
-exports.visitNodes = function visitNodes() {
+exports.collectNodes = function collectNodes() {
   const nodes = []
   let currentNode = null
 
@@ -81,11 +81,11 @@ function processNode(hash, node) {
 }
 
 /**
- * Reconstructs the callgraph from the nodes array obtained via @see visitNodes.
+ * Reconstructs the callgraph from the nodes array obtained via @see collectNodes.
  *
  * @name constructCallgraph
  * @function
- * @param {Array.<Object>} nodes obtained via @see visitNodes
+ * @param {Array.<Object>} nodes obtained via @see collectNodes
  * @return {Object} the callgraph including all allocation information
  */
 exports.constructCallgraph = function constructCallgraph(nodes) {
@@ -102,82 +102,16 @@ exports.constructCallgraph = function constructCallgraph(nodes) {
 }
 
 /**
- * Allows collecting all sampled allocations using the Visitor pattern, thus matching the underlying v8 API.
- *
- * @name visitAllocationProfile
- * @function
- * @param {function} cb called back with each callsite for which memory allocations where encountered
- */
-const visitAllocationProfile = exports.visitAllocationProfile = function visitAllocationProfile(cb) {
-  const samples = []
-  let sample = null
-  let currentCallSite
-  function onCall(depth,
-                  name,
-                  script_name,
-                  script_id,
-                  start_position,
-                  line_number,
-                  column_number) {
-    // back at the top of the stack means we're dealing with a new sample
-    if (depth === 1 && sample) {
-      // push the previously collected sample and start over
-      samples.push(sample)
-      sample = { callsites: [] }
-    }
-    currentCallSite = {
-      depth          : depth,
-      name           : name,
-      script         : script_name,
-      script_id      : script_id,
-      start_position : start_position,
-      line_number    : line_number,
-      column_number  : column_number,
-      allocations    : []
-    }
-
-    if (!sample) sample = { callsites: [] }
-    sample.callsites.push(currentCallSite)
-  }
-
-  function onAlloc(size, count) {
-    const allocation = { size: size, count: count }
-    currentCallSite.allocations.push(allocation)
-  }
-
-  binding.allocationProfile(onAlloc, onCall)
-
-  cb(samples)
-}
-
-/**
- * Higher level API which collects all allocated callsites via @see visitAllocationProfile.
+ * Higher level API which collects all nodes of the callgraph via @see collectNodes
+ * and then reconstructs the callgraph via @see constructCallgraph.
  *
  * @name collectAllocations
  * @function
- * @return {Array.<Object>} array of collected callsites
+ * @return {Object} the callgraph including all allocation information
  */
 exports.collectAllocations = function collectAllocations() {
-  const infos = []
-  function add(info) {
-    infos.push(info)
-  }
-
-  function onNode(allocs) {
-    function actualAllocs(alloc) {
-      // some results we get have no allocations at all, so we ignore those
-      const sitesLen = alloc.callsites.length
-      for (var i = 0; i < sitesLen; i++) {
-        const callsiteAllocs = alloc.callsites[i].allocations
-        if (callsiteAllocs.length) return true
-      }
-      return false
-    }
-    allocs.filter(actualAllocs).forEach(add)
-  }
-
-  visitAllocationProfile(onNode)
-  return infos
+  const nodes = exports.collectNodes()
+  return exports.constructCallgraph(nodes)
 }
 
 exports.addFormat = require('./lib/add-format')
