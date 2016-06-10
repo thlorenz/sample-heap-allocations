@@ -2,7 +2,6 @@
 
 const bindings = require('bindings')
 const binding = bindings('sample_heap')
-// const binding = require('/Users/thlorenz/Library/Developer/Xcode/DerivedData/binding-azowbesvlizacoezrbwrtpuhbiit/Build/Products/Debug/sample_heap.node')
 
 /**
  * Starts sampling of memory allocations
@@ -54,7 +53,7 @@ exports.visitNodes = function visitNodes() {
       line_number,
       column_number,
       allocations: [],
-      children: []
+      child_ids: []
     }
     nodes.push(currentNode)
   }
@@ -64,11 +63,42 @@ exports.visitNodes = function visitNodes() {
   }
 
   function onchild(child) {
-    currentNode.children.push(child)
+    currentNode.child_ids.push(child)
   }
 
   binding.visitNodes(onnode, onallocation, onchild)
   return nodes
+}
+
+function processNode(hash, node) {
+  function getChild(id) { return hash[id] }
+  node.children = node.child_ids.map(getChild)
+
+  function processChild(child) {
+    processNode(hash, child)
+  }
+  node.children.forEach(processChild)
+}
+
+/**
+ * Reconstructs the callgraph from the nodes array obtained via @see visitNodes.
+ *
+ * @name constructCallgraph
+ * @function
+ * @param {Array.<Object>} nodes obtained via @see visitNodes
+ * @return {Object} the callgraph including all allocation information
+ */
+exports.constructCallgraph = function constructCallgraph(nodes) {
+  function hashify(acc, node) {
+    acc[node.id] = node
+    return acc
+  }
+  const hash = nodes.reduce(hashify, {})
+
+  const rootnode_id = '0:0:0'
+  const rootnode = hash[rootnode_id]
+  processNode(hash, rootnode)
+  return rootnode
 }
 
 /**
