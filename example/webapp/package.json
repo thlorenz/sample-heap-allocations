@@ -1,0 +1,32 @@
+{
+  "name": "webapp",
+  "version": "0.0.0",
+  "description": "Webapp demonstrating the use of the sample-heap-allocations module",
+  "main": "main.js",
+  "scripts": {
+    "postinstall": "cd ../../ nave use v6.2  node-gyp rebuild",
+    "start": "nave use v6.2 node server",
+    "bundle-deps": "(cd flamegraph && npm install) && browserify -d -r sample-heap-flamegraph -o build/sample-heap-flamegraph.js",
+    "bundle": "browserify -x sample-heap-flamegraph . -o ./build/bundle.js",
+    "watch": "watchify -x sample-heap-flamegraph . -o ./build/bundle.js"
+  },
+  "dependencies": {
+    "gl-context": "~0.1.1",
+    "sample-heap-flamegraph": "@file:./flamegraph"
+  },
+  "devDependencies": {},
+  "browserify": {},
+  "keywords": [],
+  "author": {
+    "name": "Thorsten Lorenz",
+    "email": "thlorenz@gmx.de",
+    "url": "http://thlorenz.com"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/thlorenz/webapp/blob/master/LICENSE"
+  },
+  "engine": {
+    "node": ">=6.2"
+  }
+}
