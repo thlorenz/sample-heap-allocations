@@ -12,6 +12,36 @@ console.log(allocs)
 sh.stopSampling()
 ```
 
+```js
+{ id: '0:0:0',
+  script_id: 0,
+  script_name: '',
+  name: '(root)',
+  line_number: 0,
+  column_number: 0,
+  allocations: [],
+  child_ids: [ '34:10:10', '34:12:19', '48:573:26', '48:383:24', '48:414:23' ],
+  children:
+   [ { id: '34:10:10',
+       script_id: 34,
+       script_name: 'node.js',
+       name: '',
+       line_number: 10,
+       column_number: 10,
+       allocations: [],
+       child_ids: [ '34:12:19' ],
+       children:
+        [ { id: '34:12:19',
+            script_id: 34,
+            script_name: 'node.js',
+            name: 'startup',
+            line_number: 12,
+            column_number: 19,
+            allocations: [],
+            child_ids: [ '48:573:26' ],
+  // many more children
+```
+
 ## Status
 
 Working version (needs NodeJS >=v6). No tests yet :(
@@ -21,8 +51,6 @@ Working version (needs NodeJS >=v6). No tests yet :(
 Run the CLI example via `npm run cli` or `npm run cli-formatted`
 
 Run the WebApp example via `npm run app`
-
-![app](assets/sampling-memory.gif)
 
 ## Installation
 
