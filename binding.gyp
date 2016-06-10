@@ -9,8 +9,7 @@
       "<!(node -e \"require('nan')\")",
     ],
     "sources": [
-      "src/sample_heap.cc",
-      "src/sample_heap.h"
+      "src/sample_heap.cc"
     ], 
     'conditions': [
       [ 'OS=="mac"', {
