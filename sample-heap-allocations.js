@@ -44,7 +44,8 @@ exports.collectNodes = function collectNodes() {
                   script_name,
                   name,
                   line_number,
-                  column_number) {
+                  column_number,
+                  start_position) {
     currentNode = {
       id,
       script_id,
@@ -52,6 +53,7 @@ exports.collectNodes = function collectNodes() {
       name,
       line_number,
       column_number,
+      start_position,
       allocations: [],
       child_ids: []
     }

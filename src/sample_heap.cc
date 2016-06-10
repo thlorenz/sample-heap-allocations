@@ -63,6 +63,7 @@ static void VisitNodesImpl(Isolate* isolate,
   Local<String> name = node->name;
   Local<Integer> line_number = Nan::New(node->line_number);
   Local<Integer> column_number = Nan::New(node->column_number);
+  Local<Integer> start_position = Nan::New(node->start_position);
 
   Local<Value> node_argv[] = {
     id,
@@ -71,10 +72,11 @@ static void VisitNodesImpl(Isolate* isolate,
     name,
     line_number,
     column_number,
+    start_position
   };
 
   // report the node we are looking at
-  node_callback_fn->Call(recv, 6, node_argv);
+  node_callback_fn->Call(recv, 7, node_argv);
 
   // report the allocations of the node
   for (auto allocation : node->allocations) {
