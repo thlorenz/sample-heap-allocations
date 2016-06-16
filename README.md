@@ -9,7 +9,6 @@ sh.startSampling(32, 10)
 // allocate some things like Arrays
 const allocs = sh.collectAllocations()
 console.log(allocs)
-sh.stopSampling()
 ```
 
 ```js
@@ -67,7 +66,7 @@ Not yet :(
  * @name startSampling
  * @function
  * @param {number} interval the sampling interval in ms, default: 32
- * @param {number} stack_depth depth of stack to include for each memory allocation, default: 6
+ * @param {number} stack_depth depth of stack to include for each memory allocation, default: 9999 
  */
 ```
 
@@ -92,6 +91,8 @@ Not yet :(
  *
  * @name collectAllocations
  * @function
+ * @param {Object=} opts
+ * @param {Boolean=} opts.stopSampling stops sampling after collecting nodes, default: true
  * @return {Object} the callgraph including all allocation information
  */
  ```

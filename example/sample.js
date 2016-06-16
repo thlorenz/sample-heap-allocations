@@ -3,10 +3,10 @@
 const sp = require('../')
 
 module.exports = function sample(allocationFn, ondone) {
-  sp.startSampling(32, 10)
+  sp.startSampling()
   allocationFn()
+  // stops sampling automatically
   const infos = sp.collectAllocations()
-  sp.stopSampling()
 
   ondone(infos)
 }

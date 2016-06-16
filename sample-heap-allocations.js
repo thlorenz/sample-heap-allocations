@@ -2,6 +2,7 @@
 
 const bindings = require('bindings')
 const binding = bindings('sample_heap')
+const assert = require('assert')
 
 /**
  * Starts sampling of memory allocations
@@ -9,10 +10,11 @@ const binding = bindings('sample_heap')
  * @name startSampling
  * @function
  * @param {number} interval the sampling interval in ms, default: 32
- * @param {number} stack_depth depth of stack to include for each memory allocation, default: 6
+ * @param {number} stack_depth depth of stack to include for each memory allocation, default: 9999
  */
-exports.startSampling = function startSampling(interval = 32, stack_depth = 6) {
-  // todo: ensure these are integers
+exports.startSampling = function startSampling(interval = 32, stack_depth = 9999) {
+  assert.equal(typeof interval, 'number', 'First parameter "interval" needs to be a number')
+  assert.equal(typeof stack_depth, 'number', 'Second parameter "stack_depth" needs to be a number')
   binding.startSampling(interval, stack_depth)
 }
 
@@ -109,10 +111,13 @@ exports.constructCallgraph = function constructCallgraph(nodes) {
  *
  * @name collectAllocations
  * @function
+ * @param {Object=} opts
+ * @param {Boolean=} opts.stopSampling stops sampling after collecting nodes, default: true
  * @return {Object} the callgraph including all allocation information
  */
-exports.collectAllocations = function collectAllocations() {
+exports.collectAllocations = function collectAllocations({ stopSampling = true } = {}) {
   const nodes = exports.collectNodes()
+  if (stopSampling) exports.stopSampling()
   return exports.constructCallgraph(nodes)
 }
 
