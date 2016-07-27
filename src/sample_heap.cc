@@ -17,14 +17,33 @@ using v8::Object;
 using v8::String;
 using v8::Value;
 
+static inline char *copy_utf8_string(v8::Local<v8::Value> &val) {
+  v8::String::Utf8Value utf8_val(val);
+  if (*utf8_val == nullptr && utf8_val.length())
+    return nullptr;
+  char *str = static_cast<char*>(malloc(utf8_val.length() + 1));
+  if (str == nullptr)
+    return nullptr;
+  memcpy(str, *utf8_val, utf8_val.length());
+  str[utf8_val.length()] = '\0';
+  return str;
+}
 static Local<String> Identify(Isolate* isolate,
                               int script_id,
                               int line_number,
-                              int column_number) {
-    const char* id = (std::to_string(script_id) + ":" +
+                              int column_number,
+                              Local<Value> name_val) {
+    const std::string loc_id = (std::to_string(script_id) + ":" +
                       std::to_string(line_number) +  ":" +
-                      std::to_string(column_number)).c_str();
-    return String::NewFromUtf8(isolate, id);
+                      std::to_string(column_number));
+    if (name_val.IsEmpty()) {
+      return String::NewFromUtf8(isolate, loc_id.c_str());
+    } else {
+      // include name as part of id in order to avoid collisions for special script cases
+      // which all have script_id: 0 and no location, i.e. '0:0:0' with name (root)
+      const std::string id = loc_id + " " + std::string(copy_utf8_string(name_val));
+      return String::NewFromUtf8(isolate, id.c_str());
+    }
 }
 
 static void ReportChild(Isolate* isolate,
@@ -35,7 +54,8 @@ static void ReportChild(Isolate* isolate,
       isolate,
       child->script_id,
       child->line_number,
-      child->column_number);
+      child->column_number,
+      child->name);
   Local<Value> child_argv[] = { child_id };
   child_callback_fn->Call(recv, 1, child_argv);
 }
@@ -57,7 +77,7 @@ static void VisitNodesImpl(Isolate* isolate,
                            Local<Function> allocation_callback_fn,
                            Local<Function> child_callback_fn,
                            AllocationProfile::Node *node) {
-  Local<String> id = Identify(isolate, node->script_id, node->line_number, node->column_number);
+  Local<String> id = Identify(isolate, node->script_id, node->line_number, node->column_number, node->name);
   Local<Integer> script_id = Nan::New(node->script_id);
   Local<String> script_name = node->script_name;
   Local<String> name = node->name;

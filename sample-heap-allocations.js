@@ -99,7 +99,7 @@ exports.constructCallgraph = function constructCallgraph(nodes) {
   }
   const hash = nodes.reduce(hashify, {})
 
-  const rootnode_id = '0:0:0'
+  const rootnode_id = '0:0:0 (root)'
   const rootnode = hash[rootnode_id]
   processNode(hash, rootnode)
   return rootnode
