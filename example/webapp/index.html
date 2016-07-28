@@ -2,35 +2,31 @@
 <html>
 <head>
   <meta charset=utf-8 />
-  <title>Sample Heap Allocations Call Graph</title>
-    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-		<script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
-		<script src="https://cdn.rawgit.com/cpettitt/dagre/v0.7.4/dist/dagre.min.js"></script>
-		<script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-dagre/1.1.2/cytoscape-dagre.js"></script>
-    <script src="./nodes.js"></script>
-    <style>
-        body {
-          font-family: helvetica;
-          font-size: 14px;
-        }
-
-        #cy {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          left: 0;
-          top: 0;
-          z-index: 999;
-        }
-
-        h1 {
-          opacity: 0.5;
-          font-size: 1em;
-        }
-      </style>
-  </head>
+  <title>sampling memory allocations demo</title>
+  <link rel="stylesheet" href="index.css" type="text/css" media="screen" charset="utf-8">
+  <!-- CDN -->
+  <script src="https://d3js.org/d3.v3.js"></script>
+  <script src="https://d3js.org/d3-hierarchy.v1.min.js"></script>
+</head>
 <body>
-  <div id="cy"></div>
-  <script src="./main.js"></script>
+  <div class="header">
+    <h1>sampling memory allocations demo</h1>
+  </div>
+  <section>
+    <div class="control-panel">
+      <a href="/start_sampling">Start Sampling</a>
+      <a href="/allocate_flat">Allocate Flat</a>
+      <a href="/allocate_nested">Allocate Nested</a>
+      <a href="/stop_sampling">Stop Sampling</a>
+      <div id="messages" class="messages"></div>
+    </div>
+    <div id="samples" class="samples">
+      <div id="sunburst" class="sunburst"></div>
+      <div id="flamegraph" class="flamegraph"></div>
+      <div id="tree" class="tree"></div>
+      <div id="treemap" class="treemap"></div>
+    </div>
+  </section>
+  <script type="text/javascript" src="bundle.js"></script>
 </body>
 </html>
