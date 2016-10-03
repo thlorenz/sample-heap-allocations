@@ -150,14 +150,3 @@ exports.collectAllocations = function collectAllocations({ stopSampling = true, 
 }
 
 exports.addFormat = require('./lib/add-format')
-
-//
-// diagnostic tools
-//
-/*
-function write(obj, file) {
-  const stringify = require('json-stringify-safe')
-  require('fs').writeFileSync(file || './result.json', stringify(obj, null, 2))
-  return obj
-}
-*/

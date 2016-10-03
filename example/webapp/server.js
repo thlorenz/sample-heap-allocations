@@ -57,6 +57,8 @@ function serveStopSampling(res) {
   // important to collect allocations before stopping to sample
   const allocs = sh.collectAllocations()
 
+  // write(allocs)
+
   const json = stringify({ type: 'message', msg: 'Sampling Stopped', data: allocs })
   res.writeHead(200, { 'Content-Type': 'application/json', 'Content-Length': json.length })
   res.end(json)
@@ -95,3 +97,14 @@ function onRequest(req, res) {
 function onListening() {
   console.error('HTTP server listening on http://localhost:%d', this.address().port)
 }
+
+//
+// diagnostic tools
+//
+
+/*
+function write(obj, file) {
+  require('fs').writeFileSync(file || './result.json', stringify(obj, null, 2))
+  return obj
+}
+*/
