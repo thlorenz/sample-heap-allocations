@@ -3,12 +3,18 @@
 const d3 = window.d3
 const addLabel = require('./add-label')
 
+function defaultGetChildren(d) {
+  if (!d.children || !d.children.length) return []
+  if (typeof d.children.filter !== 'function') return []
+  return d.children.filter(x => !!x && !!x.allocations)
+}
+
 module.exports = function initTree({
       graph
     , clazz
     , width = 1400
     , height = 1600
-    , getChildren = d => d.children
+    , getChildren = defaultGetChildren
 }) {
   const scale = 30
   let maxAllocs = 0

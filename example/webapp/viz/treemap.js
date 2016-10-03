@@ -10,12 +10,18 @@ function sumAllocs(d) {
   return d.allocations.reduce(add, 0)
 }
 
+function defaultGetChildren(d) {
+  if (!d.children || !d.children.length) return []
+  if (typeof d.children.filter !== 'function') return []
+  return d.children.filter(x => !!x && !!x.allocations)
+}
+
 module.exports = function initTreemap({
       graph
     , clazz
     , width = 1400
     , height = 800
-    , getChildren = d => d.children
+    , getChildren = defaultGetChildren
 }) {
   const labelMargin = 40
 

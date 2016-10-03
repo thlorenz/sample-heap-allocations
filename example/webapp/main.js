@@ -14,12 +14,17 @@ const sunburstEl = document.getElementById('sunburst')
 const treeEl = document.getElementById('tree')
 const treemapEl = document.getElementById('treemap')
 
+function log(msg) {
+   const html = '<span class="message">' + msg + '</span>'
+   messagesEl.innerHTML = html
+}
+
 function logResponse(res) {
   var html = '<span><em>' + res.status + '</em></span>&nbsp;'
   if (res.error) {
     html += '<span class="error">' + res.error + '</span>'
   } else {
-    html += '<span class="message">' + res.msg + '</spanp>'
+    html += '<span class="message">' + res.msg + '</span>'
   }
   messagesEl.innerHTML = html
 }
@@ -29,10 +34,11 @@ function onresponse(err, res) {
     console.error(err)
     return logResponse({ error: err, status: 500 })
   }
-  var data = JSON.parse(res.body)
+  log('Got response, parsing ...')
+  const data = JSON.parse(res.body)
   data.status = res.statusCode
+  if (data.type === 'message') logResponse(data)
   if (data.data) refresh(data.data)
-  if (data.type === 'message') return logResponse(data)
 }
 
 function processRequest(href) {
@@ -45,10 +51,14 @@ function refresh(graph) {
   treeEl.innerHTML = ''
   treemapEl.innerHTML = ''
 
-  initFlamegraph({ graph, clazz: '.flamegraph' })
-  initSunburst({ graph, clazz: '.sunburst' })
-  initTree({ graph, clazz: '.tree' })
-  initTreemap({ graph, clazz: '.treemap' })
+  log('Updating visualizations ...')
+  setTimeout(x => {
+    initFlamegraph({ graph, clazz: '.flamegraph' })
+    initSunburst({ graph, clazz: '.sunburst' })
+    initTree({ graph, clazz: '.tree' })
+    initTreemap({ graph, clazz: '.treemap' })
+    log('Visualizations updated.')
+  }, 200)
 }
 
 function hookLink(a) {

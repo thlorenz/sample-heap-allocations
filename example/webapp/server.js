@@ -8,6 +8,7 @@ const build = require('./build')
 
 const sh = require('../../')
 const allocate = require('../allocate')
+const stringify = require('json-stringify-safe')
 
 const server = http.createServer()
 
@@ -46,7 +47,7 @@ function serveCss(res) {
 }
 
 function serveStartSampling(res) {
-  sh.startSampling()
+  sh.startSampling(32, 2)
   const json = JSON.stringify({ type: 'message', msg: 'Sampling Started' })
   res.writeHead(200, { 'Content-Type': 'application/json', 'Content-Length': json.length })
   res.end(json)
@@ -55,9 +56,8 @@ function serveStartSampling(res) {
 function serveStopSampling(res) {
   // important to collect allocations before stopping to sample
   const allocs = sh.collectAllocations()
-  sh.stopSampling()
 
-  const json = JSON.stringify({ type: 'message', msg: 'Sampling Stopped', data: allocs })
+  const json = stringify({ type: 'message', msg: 'Sampling Stopped', data: allocs })
   res.writeHead(200, { 'Content-Type': 'application/json', 'Content-Length': json.length })
   res.end(json)
 }
