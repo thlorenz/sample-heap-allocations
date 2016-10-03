@@ -43,7 +43,7 @@ console.log(allocs)
 
 ## Status
 
-Working version (needs NodeJS >=v6). No tests yet :(
+Working version. No tests yet :(
 
 ## Example
 
@@ -66,7 +66,7 @@ Not yet :(
  * @name startSampling
  * @function
  * @param {number} interval the sampling interval in ms, default: 32
- * @param {number} stack_depth depth of stack to include for each memory allocation, default: 9999 
+ * @param {number} stack_depth depth of stack to include for each memory allocation, default: 2
  */
 ```
 
@@ -93,8 +93,8 @@ Not yet :(
  * @function
  * @param {Object=} opts
  * @param {Boolean=} opts.stopSampling stops sampling after collecting nodes, default: true
+ * @param {Boolean=} opts.noCircular attempts to scrub circular references from graph (still should use safe stringify when converting to JSON), default: true
  * @return {Object} the callgraph including all allocation information
- */
  ```
 
 #### collectNodes

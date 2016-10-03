@@ -20,9 +20,9 @@ function scrubCircular(g) {
  * @name startSampling
  * @function
  * @param {number} interval the sampling interval in ms, default: 32
- * @param {number} stack_depth depth of stack to include for each memory allocation, default: 9999
+ * @param {number} stack_depth depth of stack to include for each memory allocation, default: 2
  */
-exports.startSampling = function startSampling(interval = 32, stack_depth = 9999) {
+exports.startSampling = function startSampling(interval = 32, stack_depth = 2) {
   assert.equal(typeof interval, 'number', 'First parameter "interval" needs to be a number')
   assert.equal(typeof stack_depth, 'number', 'Second parameter "stack_depth" needs to be a number')
   binding.startSampling(interval, stack_depth)
@@ -138,6 +138,7 @@ exports.constructCallgraph = function constructCallgraph(nodes) {
  * @function
  * @param {Object=} opts
  * @param {Boolean=} opts.stopSampling stops sampling after collecting nodes, default: true
+ * @param {Boolean=} opts.noCircular attempts to scrub circular references from graph (still should use safe stringify when converting to JSON), default: true
  * @return {Object} the callgraph including all allocation information
  */
 exports.collectAllocations = function collectAllocations({ stopSampling = true, noCircular = true } = {}) {
