@@ -2,6 +2,8 @@
 
 Samples heap allocations, indicating functions in which the memory was allocated
 
+[![sunburst](assets/sunburst.png)](https://thlorenz.github.io/sample-heap-allocations)
+
 ```js
 const sh = require('sample-heap-allocations')
 
