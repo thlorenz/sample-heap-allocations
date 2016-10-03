@@ -2,7 +2,17 @@
 
 const bindings = require('bindings')
 const binding = bindings('sample_heap')
+const uniqueConcat = require('unique-concat')
 const assert = require('assert')
+const traverse = require('traverse')
+
+function onnode(n) {
+  if (this.circular) this.remove()
+}
+
+function scrubCircular(g) {
+  return traverse(g).map(onnode)
+}
 
 /**
  * Starts sampling of memory allocations
@@ -74,14 +84,17 @@ exports.collectNodes = function collectNodes() {
   return nodes
 }
 
-function processNode(hash, node) {
+function processNode(hash, node, seen) {
+  if (~seen.indexOf(node.id)) return
+
   function getChild(id) { return hash[id] }
-  node.children = node.child_ids.map(getChild)
+  const children = node.child_ids.map(getChild)
+  node.children = children
 
   function processChild(child) {
-    processNode(hash, child)
+    processNode(hash, child, seen.concat(node.id))
   }
-  node.children.forEach(processChild)
+  children.forEach(processChild)
 }
 
 /**
@@ -94,14 +107,26 @@ function processNode(hash, node) {
  */
 exports.constructCallgraph = function constructCallgraph(nodes) {
   function hashify(acc, node) {
-    acc[node.id] = node
+    const exists = acc[node.id]
+    if (!exists) {
+      acc[node.id] = node
+    } else {
+      // some functions may have allocated in different places or
+      // or for other reasons appear multiple times in the nodes array
+
+      // everything but allocations and children will be the same, so
+      // let's concat the allocations and merge the child_ids
+      exists.allocations = exists.allocations.concat(node.allocations)
+      exists.child_ids = uniqueConcat(exists.child_ids, node.child_ids)
+    }
+
     return acc
   }
   const hash = nodes.reduce(hashify, {})
 
   const rootnode_id = '0:0:0 (root)'
   const rootnode = hash[rootnode_id]
-  processNode(hash, rootnode)
+  processNode(hash, rootnode, [ ])
   return rootnode
 }
 
@@ -115,10 +140,23 @@ exports.constructCallgraph = function constructCallgraph(nodes) {
  * @param {Boolean=} opts.stopSampling stops sampling after collecting nodes, default: true
  * @return {Object} the callgraph including all allocation information
  */
-exports.collectAllocations = function collectAllocations({ stopSampling = true } = {}) {
+exports.collectAllocations = function collectAllocations({ stopSampling = true, noCircular = true } = {}) {
   const nodes = exports.collectNodes()
   if (stopSampling) exports.stopSampling()
-  return exports.constructCallgraph(nodes)
+
+  const graph = exports.constructCallgraph(nodes)
+  return noCircular ? scrubCircular(graph) : graph
 }
 
 exports.addFormat = require('./lib/add-format')
+
+//
+// diagnostic tools
+//
+/*
+function write(obj, file) {
+  const stringify = require('json-stringify-safe')
+  require('fs').writeFileSync(file || './result.json', stringify(obj, null, 2))
+  return obj
+}
+*/
